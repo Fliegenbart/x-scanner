@@ -65,6 +65,10 @@ def eprint(*args: object, **kwargs: object) -> None:
 UTC = timezone.utc
 
 
+def format_x_datetime(value: datetime) -> str:
+    return value.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
 @dataclass
 class ScanRecord:
     platform: str
@@ -493,8 +497,8 @@ class XScanner:
             remaining = max_posts - total
             params: Dict[str, Any] = {
                 "query": q,
-                "start_time": start_time.isoformat().replace("+00:00", "Z"),
-                "end_time": end_time.isoformat().replace("+00:00", "Z"),
+                "start_time": format_x_datetime(start_time),
+                "end_time": format_x_datetime(end_time),
                 "max_results": min(500, max(10, remaining)),
                 "tweet.fields": "created_at,lang,public_metrics,author_id,conversation_id,possibly_sensitive",
                 "expansions": "author_id",
@@ -577,8 +581,8 @@ class XScanner:
         while total < max_posts:
             remaining = max_posts - total
             params: Dict[str, Any] = {
-                "start_time": start_time.isoformat().replace("+00:00", "Z"),
-                "end_time": end_time.isoformat().replace("+00:00", "Z"),
+                "start_time": format_x_datetime(start_time),
+                "end_time": format_x_datetime(end_time),
                 "max_results": min(100, max(5, remaining)),
                 "tweet.fields": "created_at,lang,public_metrics,author_id,conversation_id,possibly_sensitive",
             }
